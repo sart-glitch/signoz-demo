@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-one-deployment
+  namespace: tel-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-one
+  template:
+    metadata:
+      labels:
+        app: ms-one
+    spec:
+      containers:
+        - name: ms-one
+          image: sarthak8564/ms-one-k8s:test2-updated-2
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-one-service
+  namespace: tel-ns
+spec:
+  selector:
+    app: ms-one
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8080
+  type: NodePort
+

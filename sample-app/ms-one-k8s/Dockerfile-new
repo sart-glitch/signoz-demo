@@ -1,0 +1,32 @@
+# Stage 1: Build the application
+FROM maven:3.9.4-eclipse-temurin-17 AS build
+
+WORKDIR /app
+
+# Copy only the pom.xml first to download dependencies (cache optimization)
+COPY pom.xml .
+
+
+
+# Copy all source code
+COPY src ./src
+
+# Build the jar file, skip tests to speed up (optional)
+RUN mvn clean package -DskipTests
+
+# Stage 2: Run the application
+FROM eclipse-temurin:17-jre-alpine
+
+WORKDIR /app
+
+# Copy jar from build stage
+COPY --from=build /app/target/ms-one-0.0.1-SNAPSHOT.jar app.jar
+
+ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar .
+#ENV JAVA_TOOL_OPTIONS "-javaagent:./opentelemetry-javaagent.jar"
+#ENTRYPOINT ["java", "-javaagent:./opentelemetry-javaagent.jar", "-Dotel.service.name=ms-one", "-Dotel.traces.exporter=otlp", "-Dotel.exporter.otlp.traces.endpoint=http://signoz-otel-collector.signoz.svc.cluster.local:4317", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-javaagent:./opentelemetry-javaagent.jar", "-Dotel.service.name=ms-one", "-Dotel.traces.exporter=otlp", "-Dotel.exporter.otlp.protocol=http/protobuf", "-Dotel.exporter.otlp.endpoint=http://signoz-otel-collector.signoz.svc.cluster.local:4318", "-jar", "app.jar"]
+
+# Run the jar
+#ENTRYPOINT ["java","-jar","app.jar"]
+
