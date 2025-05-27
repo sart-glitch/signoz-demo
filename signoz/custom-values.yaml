@@ -324,7 +324,7 @@ clickhouse:
   # Cold storage configuration
   coldStorage:
     # -- Whether to enable S3 cold storage
-    enabled: false
+    enabled: true
     # -- Reserve free space on default disk (in bytes)
     # Default value is 10MiB
     defaultKeepFreeSpaceBytes: "10485760"
@@ -334,7 +334,7 @@ clickhouse:
     # For S3, if region is us-east-1, endpoint can be https://s3.amazonaws.com
     #         if region is not us-east-1, endpoint should be https://s3-<region>.amazonaws.com
     # For GCS, endpoint should be https://storage.googleapis.com/<bucket-name>/data/
-    endpoint: https://<bucket-name>.s3-<region>.amazonaws.com/data/
+    endpoint: https://signoz-coldstorage-26-05-25.s3.us-east-2.amazonaws.com/data/
     # -- Access Key for S3 or GCS
     accessKey: <access_key_id>
     # -- Secret Access Key for S3 or GCS
@@ -342,11 +342,11 @@ clickhouse:
     # AWS role configuration - to use environment variables instead of passing access and secret keys
     role:
       # -- Whether to enable AWS IAM ARN role.
-      enabled: false
+      enabled: true
       # -- Annotations to use by service account associated to Clickhouse instance
       annotations:
         # aws role arn
-        eks.amazonaws.com/role-arn: arn:aws:iam::******:role/*****
+        eks.amazonaws.com/role-arn: arn:aws:iam::412381762776:role/demo-cold-storage-role
   # -- Clickhouse configuration files.
   #
   # Refs:

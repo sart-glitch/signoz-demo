@@ -1,0 +1,60 @@
+--------------------------------------------------------------------------------------------------
+Cold storage for logs
+Step 1: Create oidc provider,
+
+eksctl utils associate-iam-oidc-provider --cluster=DevSecOps-Cluster --region=us-east-2 --approve
+
+Rest steps follow from this link: https://signoz.io/docs/tutorial/s3-integration-iam-role-eks/
+
+
+{
+   "Statement": [
+      {
+            "Action": [
+               "s3:GetObject",
+               "s3:GetObjectVersion",
+               "s3:PutBucketVersioning",
+               "s3:PutObject"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+               "arn:aws:s3:::signoz-coldstorage-26-05-25",
+               "arn:aws:s3:::signoz-coldstorage-26-05-25/*"
+            ]
+      }
+   ],
+   "Version": "2012-10-17"
+}
+
+ 325   coldStorage:
+ 326     # -- Whether to enable S3 cold storage
+ 327     enabled: true
+ 328     # -- Reserve free space on default disk (in bytes)
+ 329     # Default value is 10MiB
+ 330     defaultKeepFreeSpaceBytes: "10485760"
+ 331     # -- Type of cold storage: s3 or gcs
+ 332     type: s3
+ 333     # -- Endpoint for S3 or GCS
+ 334     # For S3, if region is us-east-1, endpoint can be https://s3.amazonaws.com
+ 335     #         if region is not us-east-1, endpoint should be https://s3-<region>.amazonaws.com
+ 336     # For GCS, endpoint should be https://storage.googleapis.com/<bucket-name>/data/
+ 337     endpoint: https://signoz-coldstorage-26-05-25.s3.us-east-2.amazonaws.com/data/
+ 338     # -- Access Key for S3 or GCS
+ 339     accessKey: <access_key_id>
+ 340     # -- Secret Access Key for S3 or GCS
+ 341     secretAccess: <secret_access_key>
+ 342     # AWS role configuration - to use environment variables instead of passing access and secret keys
+ 343     role:
+ 344       # -- Whether to enable AWS IAM ARN role.
+ 345       enabled: true
+ 346       # -- Annotations to use by service account associated to Clickhouse instance
+ 347       annotations:
+ 348         # aws role arn
+ 349         eks.amazonaws.com/role-arn: arn:aws:iam::41239999999776:role/demo-cold-storage-role
+ 350   # -- Clickhouse configuration files.
+
+-------------------------------------------------------------------------------------------------------
+namespace controller for the logs remember to handle it in signoz/k8sInfra:
+
+https://signoz.io/docs/userguide/collect_kubernetes_pod_logs/
+
