@@ -1,3 +1,8 @@
+curl -X POST -d '{"customerName":"sarang"}' -H "Content-Type: application/json" http://3.145.99.37:31224/customer
+
+curl http://3.145.99.37:31224/customer
+
+
 --------------------------------------------------------------------------------------------------
 Cold storage for logs
 Step 1: Create oidc provider,
